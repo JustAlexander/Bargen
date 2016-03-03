@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="bargen" default="all">
+  
+  
+  <property file="bargen.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.swc"/>
+    <include name="*.apk"/>
+    <include name="*.zip"/>
+    <include name="*.ear"/>
+    <include name="*.egg"/>
+    <include name="*.ane"/>
+    <include name="*.jar"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/ext/cldrdata.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jaccess.jar"/>
+      <include name="jre/lib/ext/jfxrt.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/nashorn.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxswt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.com.itextpdf:itextpdf:5.5.8.classpath">
+    <pathelement location="${path.variable.maven_repository}/com/itextpdf/itextpdf/5.5.8/itextpdf-5.5.8.jar"/>
+  </path>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module Bargen -->
+  
+  <dirname property="module.bargen.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.bargen" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.bargen" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.bargen" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.bargen" value="-encoding UTF-8 -source 1.7 -target 1.7 ${compiler.args}"/>
+  
+  <property name="bargen.output.dir" value="${module.bargen.basedir}/out/production/Bargen"/>
+  <property name="bargen.testoutput.dir" value="${module.bargen.basedir}/out/test/Bargen"/>
+  
+  <path id="bargen.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="bargen.module.production.classpath">
+    <path refid="${module.jdk.classpath.bargen}"/>
+    <path refid="library.com.itextpdf:itextpdf:5.5.8.classpath"/>
+  </path>
+  
+  <path id="bargen.runtime.production.module.classpath">
+    <pathelement location="${bargen.output.dir}"/>
+    <path refid="library.com.itextpdf:itextpdf:5.5.8.classpath"/>
+  </path>
+  
+  <path id="bargen.module.classpath">
+    <path refid="${module.jdk.classpath.bargen}"/>
+    <pathelement location="${bargen.output.dir}"/>
+    <path refid="library.com.itextpdf:itextpdf:5.5.8.classpath"/>
+  </path>
+  
+  <path id="bargen.runtime.module.classpath">
+    <pathelement location="${bargen.testoutput.dir}"/>
+    <pathelement location="${bargen.output.dir}"/>
+    <path refid="library.com.itextpdf:itextpdf:5.5.8.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.bargen">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.bargen">
+    <patternset refid="excluded.from.module.bargen"/>
+  </patternset>
+  
+  <path id="bargen.module.sourcepath">
+    <dirset dir="${module.bargen.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.bargen" depends="compile.module.bargen.production,compile.module.bargen.tests" description="Compile module Bargen"/>
+  
+  <target name="compile.module.bargen.production" depends="register.custom.compilers" description="Compile module Bargen; production classes">
+    <mkdir dir="${bargen.output.dir}"/>
+    <javac2 destdir="${bargen.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.bargen}/javac">
+      <compilerarg line="${compiler.args.bargen}"/>
+      <bootclasspath refid="bargen.module.bootclasspath"/>
+      <classpath refid="bargen.module.production.classpath"/>
+      <src refid="bargen.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.bargen"/>
+    </javac2>
+    
+    <copy todir="${bargen.output.dir}">
+      <fileset dir="${module.bargen.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.bargen.tests" depends="register.custom.compilers,compile.module.bargen.production" description="compile module Bargen; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.bargen" description="cleanup module">
+    <delete dir="${bargen.output.dir}"/>
+    <delete dir="${bargen.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.bargen, clean.artifact.bargen" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.bargen" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.bargen" value="${basedir}/out/artifacts/Bargen"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="artifact.temp.output.JavaFXApp" value="${artifacts.temp.dir}/JavaFXApp.jar"/>
+    <taskdef resource="com/sun/javafx/tools/ant/antlib.xml" uri="javafx:com.sun.javafx.tools.ant" classpath="${jdk.home.1.8}/lib/ant-javafx.jar"/>
+  </target>
+  
+  <target name="clean.artifact.bargen" description="clean Bargen artifact output">
+    <delete dir="${artifact.output.bargen}"/>
+  </target>
+  
+  <target name="artifact.bargen" depends="init.artifacts" description="Build &#39;Bargen&#39; artifact" xmlns:fx="javafx:com.sun.javafx.tools.ant">
+    <mkdir dir="${artifact.output.bargen}"/>
+    <copy file="${path.variable.maven_repository}/com/itextpdf/itextpdf/5.5.8/itextpdf-5.5.8.jar" tofile="${artifact.temp.output.JavaFXApp}/itextpdf-5.5.8.jar"/>
+    <copy file="${path.variable.maven_repository}/com/itextpdf/itextpdf/5.5.8/itextpdf-5.5.8.jar" tofile="${artifact.temp.output.JavaFXApp}/itextpdf-5.5.8.jar"/>
+    <fx:fileset id="all_but_JavaFXApp" dir="${artifact.temp.output.JavaFXApp}" includes="**/*.jar">
+      <exclude name="JavaFXApp.jar"/>
+    </fx:fileset>
+    <fx:fileset id="all_JavaFXApp" dir="${artifact.temp.output.JavaFXApp}" includes="**/*.jar"/>
+    <fx:application id="JavaFXApp_id" name="Bargen" mainClass="ru.paltyshev.bargen.Main"/>
+    <fx:jar destfile="${artifact.temp.output.JavaFXApp}/JavaFXApp.jar">
+      <fx:application refid="JavaFXApp_id"/>
+      <fileset dir="${artifact.temp.output.JavaFXApp}" excludes="**/*.jar"/>
+      <fx:resources>
+        <fx:fileset refid="all_but_JavaFXApp"/>
+      </fx:resources>
+      <manifest/>
+    </fx:jar>
+    <fx:deploy width="600" height="400" updatemode="background" outdir="${artifact.temp.output.JavaFXApp}/deploy" outfile="JavaFXApp">
+      <fx:application refid="JavaFXApp_id"/>
+      <fx:info title="Barcode Generator"/>
+      <fx:resources>
+        <fx:fileset refid="all_JavaFXApp"/>
+      </fx:resources>
+    </fx:deploy>
+    <copy todir="${artifact.output.bargen}">
+      <fileset dir="${artifact.temp.output.JavaFXApp}/deploy"/>
+    </copy>
+    <delete includeemptydirs="true">
+      <fileset dir="${artifact.temp.output.JavaFXApp}"/>
+    </delete>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.bargen" description="Build all artifacts">
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
